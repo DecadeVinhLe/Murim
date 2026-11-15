@@ -407,3 +407,35 @@ html.head-hide .head-zone { pointer-events: auto; }
 .bagua .bead.on { fill: #8dffd2; stroke: #d6b36a; filter: drop-shadow(0 0 3px #5dffc0); }
 .bagua .yy { animation: spin 48s linear infinite; }
 @media (max-width: 640px) { .bagua { width: 44px; height: 44px; } .cal { gap: 8px; } }
+
+/* ---------- Light mode: misty peaks, ink on paper ---------- */
+.mode[aria-checked="true"] .i-sun { stroke: var(--muted); }
+:root[data-hour="day"] {
+  --bg: #e9eeec; --ink: #17212c; --muted: #3c4a56; --accent: #8a5516; --on-seal: #f6ead2;
+  --panel: rgba(247, 250, 248, 0.86); --panel-2: rgba(255, 255, 255, 0.6); --panel-hover: rgba(255, 255, 255, 0.96);
+  --line: rgba(40, 54, 66, 0.3); --smear: rgba(20, 30, 42, 0.14); --glow: rgba(110, 170, 170, 0.35);
+  --menu-bg: rgba(236, 242, 240, 0.95); --foot-bg: rgba(238, 243, 241, 0.82);
+  color-scheme: light;
+}
+:root[data-hour="day"] .topbar { background: linear-gradient(180deg, rgba(244, 247, 245, 0.94), rgba(244, 247, 245, 0.74)); }
+:root[data-hour="day"] .cal, :root[data-hour="day"] .name-cn, :root[data-hour="day"] .tagline, :root[data-hour="day"] .m-desc, :root[data-hour="day"] .vert { text-shadow: none; }
+:root[data-hour="day"] .vert { color: #7a4a12; }
+:root[data-hour="day"] .name-cn { color: #1a1612; text-shadow: 4px 3px 0 rgba(179, 36, 42, 0.38); }
+:root[data-hour="day"] .name .l1, :root[data-hour="day"] .name .l2, :root[data-hour="day"] .page-title { background-image: linear-gradient(180deg, #7a4d14 0%, #54340c 55%, #2e1c06 100%); filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.5)); }
+:root[data-hour="day"] .panel, :root[data-hour="day"] .card, :root[data-hour="day"] .door, :root[data-hour="day"] .link-card, :root[data-hour="day"] .minor li, :root[data-hour="day"] .pm-pane, :root[data-hour="day"] .glance li { background: linear-gradient(160deg, rgba(150, 195, 195, 0.28), transparent 55%), var(--panel); }
+:root[data-hour="day"] .door:hover, :root[data-hour="day"] .link-card:hover, :root[data-hour="day"] .card:hover { background: linear-gradient(160deg, rgba(120, 175, 175, 0.35), transparent 60%), var(--panel-hover); }
+:root[data-hour="day"] .roles li span, :root[data-hour="day"] .tags li { background: rgba(20, 32, 44, 0.09); color: var(--ink); }
+:root[data-hour="day"] .btn.ghost { background: rgba(20, 32, 44, 0.1); color: var(--ink); }
+:root[data-hour="day"] .btn.ghost:hover { background: rgba(20, 32, 44, 0.18); }
+:root[data-hour="day"] .deck { background: rgba(245, 248, 246, 0.96); box-shadow: inset 0 0 0 1.5px var(--line); }
+:root[data-hour="day"] .lcd { background: rgba(20, 32, 44, 0.07); }
+:root[data-hour="day"] .pbtn:hover { background: rgba(20, 32, 44, 0.1); }
+:root[data-hour="day"] .m-key { background: rgba(20, 32, 44, 0.1); }
+:root[data-hour="day"] .m-key:hover { background: rgba(20, 32, 44, 0.18); }
+:root[data-hour="day"] .mode { background: rgba(244, 247, 245, 0.9); }
+:root[data-hour="day"] .p-duo, :root[data-hour="day"] .avatar img { filter: url(#duo-day); }
+:root[data-hour="day"] .brand-t small { color: #7a4a12; }
+:root[data-hour="day"] .portrait figcaption, :root[data-hour="day"] .cal-day { color: var(--on-seal); }
+:root[data-hour="day"] .pm-btn { color: var(--muted); }
+:root[data-hour="day"] .pm li.on .pm-btn, :root[data-hour="day"] .pm-btn:hover { color: var(--ink); }
+@media (max-width: 640px) { .mode { width: 58px; height: 30px; } .mode-knob { width: 26px; height: 24px; } .mode[aria-checked="true"] .mode-knob { transform: translateX(25px); } .mode svg { width: 14px; height: 14px; margin-top: -7px; } .mode .i-sun { left: 8px; } .mode .i-moon { right: 8px; } .head-r { gap: 8px; } }

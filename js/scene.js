@@ -273,16 +273,27 @@
   function draw(t) {
     var i, g;
     ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1;
-    ctx.drawImage(bg, -14 - px * 12, -10 - py * 6, W + 28, H + 20);
-    g = ctx.createRadialGradient(moon.x, moon.y, moon.r * 0.9, moon.x, moon.y, moon.r * 2.6);
-    ctx.globalCompositeOperation = "lighter";
+    var mxp = moon.x, myp = moon.y, mrp = moon.r;
+    var art = mode === "day" ? artDay : artNight;
+    if (art) {
+      /* the supplied painting, cropped to cover, with a calm dim so the text on top stays readable */
+      var sc = Math.max(W / art.width, H / art.height) * 1.05, dw = art.width * sc, dh = art.height * sc;
+      var ox = -(dw - W) * 0.5 - px * 14, oy = -(dh - H) * 0.3 - py * 8;
+      ctx.drawImage(art, ox, oy, dw, dh);
+      mxp = ox + dw * 0.5; myp = oy + dh * 0.25; mrp = dw * 0.39;
+      ctx.fillStyle = mode === "day" ? "rgba(238,243,241,0.5)" : "rgba(3,5,12,0.5)"; ctx.fillRect(0, 0, W, H);
+    } else {
+      ctx.drawImage(bg, -14 - px * 12, -10 - py * 6, W + 28, H + 20);
+    }
+    g = ctx.createRadialGradient(mxp, myp, mrp * 0.9, mxp, myp, mrp * 2.6);
+    ctx.globalCompositeOperation = mode === "day" ? "source-over" : "lighter";
     var br = 0.07 + Math.sin(t * 0.5) * 0.02;
     g.addColorStop(0, "rgba(236,212,160," + br + ")"); g.addColorStop(1, "rgba(236,212,160,0)");
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     ctx.globalCompositeOperation = "source-over";
     for (i = 0; i < clouds.length; i++) {
       var c = clouds[i], sp = cloudSp[c.sp], cw = W * 0.7 * c.s, ch = cw * sp.height / sp.width, x = ((c.x + t * c.v) % 1.5 - 0.3) * W;
-      ctx.globalAlpha = c.a; ctx.drawImage(sp, x, c.y * H, cw, ch);
+      ctx.globalAlpha = mode === "day" ? 0 : art ? c.a * 0.35 : c.a; ctx.drawImage(sp, x, c.y * H, cw, ch);
     }
     for (i = 0; i < fogs.length; i++) {
       var f = fogs[i], fx = ((f.x + t * f.v) % 1.4 - 0.3) * W;
@@ -290,7 +301,7 @@
     }
     ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = "lighter";
-    for (i = 0; i < lan.length; i++) {
+    for (i = 0; i < (art ? 0 : lan.length); i++) {
       var L = lan[i], fl = 0.7 + 0.3 * Math.sin(t * (1.1 + (i % 5) * 0.37) + i * 1.7) + 0.08 * Math.sin(t * 7 + i), rr = 15 + (i % 3) * 4;
       g = ctx.createRadialGradient(L.x, L.y, 0, L.x, L.y, rr * 2.4);
       g.addColorStop(0, "rgba(255,150,90," + (0.7 * fl).toFixed(3) + ")"); g.addColorStop(0.25, "rgba(232,62,38," + (0.34 * fl).toFixed(3) + ")"); g.addColorStop(1, "rgba(200,40,20,0)");
@@ -300,13 +311,16 @@
       ctx.fillStyle = g; ctx.fillRect(L.x - 3, H * 0.955, 6, H * 0.045);
     }
     ctx.globalCompositeOperation = "source-over";
-    ctx.save(); ctx.translate(-px * 16, H); ctx.rotate(Math.sin(t * 0.3) * 0.0035); ctx.translate(0, -H); ctx.drawImage(fgc, 0, 0, W, H); ctx.restore();
+    if (!art) { ctx.save(); ctx.translate(-px * 16, H); ctx.rotate(Math.sin(t * 0.3) * 0.0035); ctx.translate(0, -H); ctx.drawImage(fgc, 0, 0, W, H); ctx.restore(); }
+    if (art && mode === "day") { g = ctx.createLinearGradient(0, 0, W, 0); g.addColorStop(0, "rgba(238,243,241,0.55)"); g.addColorStop(0.6, "rgba(238,243,241,0.12)"); g.addColorStop(1, "rgba(238,243,241,0)"); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); }
+    else if (art) { g = ctx.createLinearGradient(0, 0, W, 0); g.addColorStop(0, "rgba(2,3,8,0.5)"); g.addColorStop(0.6, "rgba(2,3,8,0.12)"); g.addColorStop(1, "rgba(2,3,8,0)"); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      g = ctx.createRadialGradient(W * 0.5, H * 0.5, Math.min(W, H) * 0.35, W * 0.5, H * 0.5, Math.max(W, H) * 0.8); g.addColorStop(0, "rgba(0,0,6,0)"); g.addColorStop(1, "rgba(0,0,6,0.55)"); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); }
     for (i = 0; i < parts.length; i++) {
       var q = parts[i], al = q.a * Math.min(1, q.y / (H * 0.3));
-      ctx.fillStyle = "rgba(255,110,60," + al.toFixed(3) + ")";
+      ctx.fillStyle = mode === "day" ? "rgba(255,255,255," + (al * 0.8).toFixed(3) + ")" : "rgba(255,110,60," + al.toFixed(3) + ")";
       ctx.beginPath(); ctx.arc(q.x + Math.sin(t * 0.6 + q.ph) * 14, q.y, q.r, 0, 6.2832); ctx.fill();
     }
-    if (!reduce) {
+    if (!reduce && mode !== "day") {
       ctx.strokeStyle = "rgba(190,200,222,0.12)"; ctx.lineWidth = 1; ctx.beginPath();
       for (i = 0; i < 80; i++) { var rx = ((i * 97.3 + t * 90) % (W + 80)) - 40, ry = ((i * 53.7 + t * 420) % (H + 60)) - 30; ctx.moveTo(rx, ry); ctx.lineTo(rx - 5, ry + 16); }
       ctx.stroke();
@@ -314,6 +328,11 @@
     var gx = Math.floor(Math.random() * 256), gy = Math.floor(Math.random() * 256), pat = ctx.createPattern(grain, "repeat");
     ctx.save(); ctx.globalAlpha = 0.055; ctx.globalCompositeOperation = "overlay"; ctx.translate(-gx, -gy); ctx.fillStyle = pat; ctx.fillRect(0, 0, W + 256, H + 256); ctx.restore();
   }
+
+  var artNight = null, artDay = null, mode = "night";
+  function loadArt(src, set) { var im = new Image(); im.onload = function () { set(im); if (reduce) draw(2.5); }; im.src = src; }
+  loadArt("assets/img/bg-moon.jpg", function (im) { artNight = im; });
+  loadArt("assets/img/bg-karst.jpg", function (im) { artDay = im; });
 
   var last = 0;
   function frame(now) {
@@ -336,7 +355,7 @@
     if (running) requestAnimationFrame(frame);
   });
 
-  window.LTLWater = { setPalette: function () {} };
+  window.LTLWater = { setPalette: function (name) { mode = name === "night" ? "night" : "day"; if (reduce) draw(2.5); } };
 
   build();
   if (reduce) { draw(2.5); } else { requestAnimationFrame(frame); }

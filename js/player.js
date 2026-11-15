@@ -1,5 +1,5 @@
 /* Music player in the header (markup is injected by main.js).
-   Main track: assets/audio/color-your-night.mp3. The "+" button loads any other audio file for the visit.
+   Main track: assets/audio/hien-thien-duyen.mp3. The "+" button loads any other audio file for the visit.
    Position and play state carry over to the next page through sessionStorage. */
 (function () {
   "use strict";
@@ -18,7 +18,7 @@
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var KEY = "ltl-player";
 
-  var MAIN = { url: "assets/audio/[Vietsub + Pinyin] Hiến Thiên Duyên (献天缘) - Nghê Hạo Nghị.mp3", artist: "何中华", title: "献天缘", main: true };
+  var MAIN = { url: "assets/audio/hien-thien-duyen.mp3", artist: "Vietsub · Pinyin", title: "Hiện Thiên Duyên", main: true };
 
   var audio = new Audio();
   audio.preload = "metadata";
@@ -64,7 +64,7 @@
   function fail() {
     playing = false;
     ui();
-    show("error", tracks[idx].main ? "Add assets/audio/[Vietsub + Pinyin] Hiến Thiên Duyên (献天缘) - Nghê Hạo Nghị.mp3" : "This file can't be played here");
+    show("error", tracks[idx].main ? "Add assets/audio/hien-thien-duyen.mp3" : "This file can't be played here");
   }
   function play() {
     var p = audio.play();

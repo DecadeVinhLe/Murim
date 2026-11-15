@@ -29,16 +29,16 @@
     return { key: "night", label: "Late Night" };
   }
   /* Two looks: Night Vigil is the moonlit jade night, Day is ember dusk. Without a saved choice the clock decides. */
-  dark = true; /* one look only: the storm night */
+  dark = saved === "day" ? false : true; /* dark moon night by default; light misty-peaks day by choice */
   function applyPalette() {
     var t = todOf(new Date().getHours());
     document.documentElement.setAttribute("data-hour", dark ? "night" : "day");
-    if (window.LTLWater) window.LTLWater.setPalette(dark ? "night" : t.key === "night" ? "evening" : t.key);
+    if (window.LTLWater) window.LTLWater.setPalette(dark ? "night" : "day");
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", "#07090f");
+    if (meta) meta.setAttribute("content", dark ? "#07090f" : "#e9eeec");
     if (modeBtn) {
       modeBtn.setAttribute("aria-checked", dark ? "true" : "false");
-      modeBtn.title = dark ? "Switch to ember dusk" : "Switch to night vigil colours";
+      modeBtn.title = dark ? "Switch to light mode" : "Switch to dark mode";
     }
   }
   function toggleDark() {
@@ -83,6 +83,9 @@
     '<a class="brand" href="index.html" aria-label="Le Tran Lam Vinh, home"><span class="seal mini" data-seal="gate" aria-hidden="true"></span><span class="brand-t">Le Tran Lam Vinh<small>Web · Security · Silicon</small></span></a>' +
     '<nav class="topnav" aria-label="Pages">' + PAGES.filter(function (q) { return q.href; }).map(function (q) { return '<a href="' + q.href + '"' + (q.id === page ? ' aria-current="page"' : '') + '><span>' + q.name + '</span></a>'; }).join('') + '</nav>' +
     '<div class="head-r">' +
+    '<button class="mode" id="mode" type="button" role="switch" aria-checked="true" aria-label="Dark mode"><span class="mode-knob"></span>' +
+    '<svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>' +
+    '<svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></button>' +
     '<div class="cal" id="cal" aria-label="Today">' + baguaSvg() + '<div class="cal-text">' +
     '<div class="cal-row"><span class="cal-date" id="cal-date"></span><span class="cal-day" id="cal-day"></span>' +
     '<svg class="moon" id="moon" viewBox="-12 -12 24 24" role="img" aria-label="Moon phase"></svg></div>' +
@@ -115,7 +118,7 @@
       '<feComponentTransfer><feFuncR type="table" tableValues="' + r + '"/><feFuncG type="table" tableValues="' + g + '"/><feFuncB type="table" tableValues="' + b + '"/></feComponentTransfer></filter>';
   }
   html = '<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>' +
-    duo("duo-day", "0.03 0.42 0.94", "0.03 0.34 0.82", "0.05 0.28 0.62") +
+    duo("duo-day", "0.08 0.5 0.96", "0.1 0.55 0.97", "0.14 0.56 0.94") +
     duo("duo-dawn", "0.03 0.42 0.94", "0.03 0.34 0.82", "0.05 0.28 0.62") +
     duo("duo-night", "0.03 0.42 0.94", "0.03 0.34 0.82", "0.05 0.28 0.62") +
     "</defs></svg>" + html;
@@ -130,7 +133,8 @@
     else { img.addEventListener("load", ok); img.addEventListener("error", bad); }
   });
 
-  var modeBtn = null;
+  var modeBtn = document.getElementById("mode");
+  modeBtn.addEventListener("click", toggleDark);
 
   /* ---------- Calendar ---------- */
   var elDate = document.getElementById("cal-date");
